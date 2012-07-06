@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><title>RiTaBoxEditor</title>
+    <style>
+    body {
+        color: #777;
+        background-color: #F9F2E3;
+        font-family: "Times New Roman";
+        font-size: 90%;
+    }
+    canvas {
+        float: left;
+        background-color: white;
+    }
+    </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="800" height="600"></canvas>
+        <div id="glyphs-form">
+            <br>mouse:  <span id="mpos">0,0</span><br>
+            <form method='get'action=''>
+                
+                <input name=type type=hidden value=glyphs>
+                <input name=color type=hidden value=gray>
+                
+                <table border=1>
+                <tr><td>id:</td><td><span id='id'>0</span><br></td></tr>
+                <tr><td>text:</td><td><input name="text" type=text value='text'><br></td></tr>
+                <tr><td>font:</td><td> <input name="font" type=text value='Times New Roman' editable=false READONLY><br></td></tr>
+    
+                <tr><td>position:</td>
+                <td>x<input size=1 name='px' type=text value=0>y<input size=1 name='py' type=text value=0>
+                <br></td></tr>
+                
+                <tr>
+                <td>fontSize:</td><td> <input name="fontSize" type="range"  min="0" max="360" value='14'/><br/></td></tr>
+                <td>rotation: </td><td><input name="rotation" type="range"  min="0" max="360" value='0'/><br/></td></tr>
+                <td>friction:</td><td> <input  name="friction" type="range"  min="0" max="100" value='30'/><br/></td></tr>
+                <td>restitution: </td><td><input  name="restitution" type="range"  min="0" max="100" value='0'/><br/></td></tr>
+                <td>fixedRotation:</td><td> <input type="checkbox" name="fixedRotation" checked/><br/> </td></tr>
+                <td>isStatic:</td><td> <input type="checkbox" name="isStatic" checked/><br/> </td></tr>
+                <p>
+                <tr><td>boundingBoxType: <br></td><td>
+                <input type="radio" name="boundingBoxType" value="BOX"/>box<br/>
+                <input type="radio" name="boundingBoxType" value="RECTS"/>rects<br/>
+                <input type="radio" name="boundingBoxType" value="GLYPHS"/>glyphs <br/>
+                </td></tr>
+                <tr><td>name:</td><td> <input name=name type=text><br></td></tr>
+                <tr><td></td><td><input name=apply value=apply type=submit><br></td></tr>
+                
+                </table>
+                
+            </form>
+        </div>  
+        <script src="lib/jquery.js"></script>
+        <script src="../RiTaLibraryJS/src/RiTa.js"></script>
+        <script src="../RiTaLibraryJS/src/RiText.js"></script>
+        <script>
+        
+        window.onload = setup;
+        
+        ////////////////////////////////////////////////////////
+     
+        function setup() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            canvas.addEventListener('mouseup', function(evt){
+                var m = getMousePos(canvas, evt);
+                $('[name=px]').val(m.x);
+                $('[name=py]').val(m.y);
+                createObject();
+            }, false);
+            canvas.addEventListener('mousemove', function(evt){
+                var mousePos = getMousePos(canvas, evt);
+                if (RiText.getPicked()[0]) {
+                    RiText.getPicked()[0].showBoundingBox(true);
+                }
+            }, false);
+            
+            RiText.loop(10);
+        }
+        
+        function draw(){    
+            RiText.background();
+            RiText.drawAll();
+        }
+        
+        ////////////////////////////////////////////////////////
+        
+        function getMousePos(canvas, evt){
+            
+            // get canvas position
+            var obj = canvas;
+            var top = 0;
+            var left = 0;
+            while (obj && obj.tagName != 'BODY') {
+                top += obj.offsetTop;
+                left += obj.offsetLeft;
+                obj = obj.offsetParent;
+            }
+            // return relative mouse position
+            var mouseX = evt.clientX - left + window.pageXOffset;
+            var mouseY = evt.clientY - top + window.pageYOffset;
+            return { x: mouseX, y: mouseY };
+        }
+
+        function createObject() {
+            
+            if (!createObject.ID) createObject.ID = 0;
+            var id = ++createObject.ID;
+            
+            $('#id').val(id);
+            
+            var x = $('[name=px]').val();
+            var y = $('[name=py]').val();
+            var text = $('[name=text]').val();
+            var fontName = $('[name=font]').val();
+            var fontSize = $('[name=fontSize]').val();
+            var font = {name: fontName, size:fontSize};
+
+            var rt = RiText(text,x,y,font);
+            
+            //var color = 'gray';//$('[name=color]').val();
+            //rt.fill(color);
+            
+            console.log('isStatic='+$('[name=isStatic]').val());
+            rt.data = { 
+                id : id,
+                //color : color,
+                isStatic : $('[name=isStatic]').is(":checked"),
+                fixedRotation : $('[name=fixedRotation]').is(":checked"),
+                
+                //$(".myCheckbox").prop("checked", true);
+                
+                rotation : $('[name=rotation]').val(),
+                friction : $('[name=friction]').val(),
+                restitution : $('[name=restitution]').val(),
+    
+                boundingBoxType : $('[name=boundingBoxType]').val(),
+                name : $('[name=name]').val()
+            }
+ 
+            console.log(rt.data);
+            //objects.push(obj);
+            console.log("RiTexts: "+RiText.instances.length);
+        } 
+        </script>
+        
+
+    </body>
+</html>

@@ -1,0 +1,90 @@
+<html>
+<head>
+<title>RiTaBox2d</title>
+</head>
+
+
+<body onload="setup()">
+<canvas id="canvas" width="800" height="600" style="position: absolute; background-color:#fff;"></canvas>
+</body>
+
+<script type="text/javascript" src="../lib/Box2dWeb-2.1.a.3.js"></script>
+<script type="text/javascript" src="../lib/Stats.js"></script>
+<script type="text/javascript" src="../lib/RiTaBox.js"></script>
+<script type="text/javascript" src="../fonts/Times_New_Roman.js"></script>
+
+<script type="text/javascript">
+
+var ctx = document.getElementById("canvas").getContext("2d"),
+    x = 20, y = 400, fontSz = 40, isStatic = 1;
+
+function setup() {
+    
+    var rb = RiTaBox;
+    var world = rb.createWorld(ctx, { stats:1, debugDraw:1, drawBoundingBoxes:0 });
+    
+    rb.createFloor(world);
+
+    var opts = { static: isStatic, rotates: 1, rotation: Math.PI/4, bbType:RECTS };
+    
+    //opts.rotation = Math.PI/4; // rotation-problem!
+    opts.bbType = BOX;
+    rb.glyphs(x, y, "WALKTHRU", "Times New Roman", fontSz, world, opts);
+    
+    opts.bbType = RECTS;
+    rb.glyphs(x+280, y, "pRoyoTYpE", "Times New Roman", fontSz, world, opts);
+    
+    opts.bbType = POLYS;
+    rb.glyphs(x+560, y, "WroToTYpE", "Times New Roman", fontSz, world, opts);
+    
+    
+    //rb.randomShapes(10,world);
+}
+
+//////////////////////////////////////////////////////////////////
+
+function setStatic(body, val) {
+    
+    var data = body.GetUserData();
+    
+    if (!data) return;
+    
+    if (!data.fixed)
+        body.SetType( val ? b2Body.b2_staticBody:b2Body.b2_dynamicBody);
+    
+    if (!val && dat.type.indexOf('glyph')==0) {
+        data.isStatic = false;
+    }
+        //log("data:"+dump(data));
+} 
+
+
+    
+function keyHandle(e)
+{
+    var actualKey = String.fromCharCode(e.which);
+
+    if (actualKey === '=') {
+        fontSz *= 2;
+        actualKey = ""+g.GetUserData().letter;
+    }
+    if (actualKey === '-') {
+        fontSz /= 2;
+        actualKey = ""+g.GetUserData().letter;
+    }
+   
+    if (actualKey === ' ') {
+        isStatic = !isStatic; 
+        for (var i = 0; i < __b2dObjects.length; i++) {
+            setStatic(__b2dObjects[i], isStatic);
+        }
+    } 
+}
+
+//document.onkeypress = keyHandle;
+
+
+</script>
+
+
+</html>

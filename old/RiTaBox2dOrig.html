@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>RiTaBox2d</title>
+</head>
+<body onload="setup()">
+<canvas id="canvas" width="600" height="400" style="position: absolute; background-color:#fff;"></canvas>
+</body>
+style="position: absolute; z-index: 0">
+<script type="text/javascript" src="lib/Box2dWeb-2.1.a.3.js"></script>
+<script type="text/javascript" src="lib/namespace.min.js"></script>
+<script type="text/javascript" src="lib/poly2tri.js"></script>
+<script type="text/javascript" src="Box2dDemo.js"></script>
+<script type="text/javascript" src="fontparser.js"></script>
+<script type="text/javascript" src="TextBox2d.js"></script>
+<script type="text/javascript" src="lib/Georgia_400.js"></script>
+
+<script type="text/javascript">
+
+var isStatic=1, x=300,y=200,DEBUG_DRAW=0, W=600, H=400, 
+  ctx=document.getElementById("canvas").getContext("2d"), offsetX = 0,
+  canvasPosition = getElementPosition(ctx.canvas);
+ 
+function setup() {
+
+    var world = b2DemoInit();
+    ctx.fillStyle="rgba(255, 255, 255, 0.1)";
+    
+    __b2rect(x,y,50,100,world,false,isStatic);
+    __b2circle(x+200,y,25,world,false,isStatic);
+    __glyph(x, y, "H", "Georgia", 100, world, false, isStatic);
+    //__glyph(x+75, y, "e", "Georgia", 100, world, false, isStatic);
+
+    //var H = __text(x, y, "Hello", "Georgia", 100, world, false, isStatic);
+    //var g = __glyph(x, y, "g", "Georgia", 100, world, false, isStatic);
+}
+
+//var frameCount;
+function drawRiTaBox2d() {
+    
+    if (!DEBUG_DRAW)
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    
+    this.frameCount = (isNull(this.frameCount)) ? 1 : frameCount+1;
+    
+    //log(frameCount);
+    
+    ctx.font      = "normal 200px Sans";
+    ctx.strokeStyle="#000000";
+    ctx.strokeStyle="rgba(0, 0, 0, 1)";
+
+    ctx.fillStyle="rgba(255, 255, 255, 0)";
+    
+    __rect(ctx,0,0,600,400);
+    
+    //ctx.strokeText("Hello, world!", x, y)
+
+    ctx.save();
+    
+        
+        ctx.fillStyle="rgba(255, 255, 255, 0.1)";
+ 
+        __line(ctx,0,y,ctx.canvas.width,y);
+        __line(ctx,x,0,x,canvas.height);
+        
+        for (var i = 0; i < _b2dObjects.length; i++) {
+            
+            var body = _b2dObjects[i];
+            var radians = body.GetAngle();
+            var vel = body.GetLinearVelocity();
+            var bPt = body.GetWorldCenter();
+            
+            var pos = worldToPixels(bPt.x, bPt.y);
+            
+            var data = body.GetUserData();
+
+            ctx.save();
+            
+            ctx.translate(pos.x-canvasPosition.x, pos.y-canvasPosition.y);
+            ctx.rotate(radians);
+
+            if (data.type == 'rect')
+                __rect(ctx, -data.width/2, -data.height/2, data.width, data.height);
+            
+            else if (data.type == 'circle')
+                __circle(ctx, 0, 0, data.radius);
+            
+            else 
+            {
+              ctx.strokeStyle="rgba(0, 0, 0, 1)";
+
+              if (data.initial.isCurrent) 
+              {
+                  ctx.translate(-(pos.x-canvasPosition.x), -(pos.y-canvasPosition.y));
+                  ctx.translate(data.initial.x, data.initial.y-data.height);
+                  __rect(ctx, 0,0, data.width,data.height);
+
+                  ctx.translate(0, data.height);
+                  ctx.scale(data.scale, data.scale);
+                  ctx.translate(-data.xOffset, 0);
+                  ctx.strokeStyle="rgba(0, 0, 0, 1)";
+                  
+                  __path(ctx, data.path);
+              }
+              else 
+              {
+                  __rect(ctx, -data.width/2, -data.height/2, data.width,data.height);
+      
+                  ctx.translate(-data.width/2, +data.height/2);
+                  
+                  ctx.scale(data.scale, data.scale);
+                  
+                  ctx.translate(-data.xOffset, 0);
+    
+                  __path(ctx, data.path);
+              }
+            }
+            ctx.restore();
+        }
+        
+    ctx.restore();
+}
+
+function randomShapes(paper, num, world) {
+    for ( var i = 0; i < num; i++) {
+        var rx = Math.random() * 300;
+        var ry = Math.random() * 300;
+        if(Math.random() > 0.5) 
+            b2rect(paper,rx,ry,3+Math.random()*30,3+Math.random()*30,world);
+        else 
+            b2circle(paper,rx,ry,3+Math.random()*30,world);
+    }
+}
+
+function setStatic(body, val) {
+    body.SetType( val ? b2Body.b2_staticBody:b2Body.b2_dynamicBody);
+    var data = body.GetUserData();
+    if (!val && data.type === 'text')
+        data.initial.isCurrent = false;
+        //log("data:"+dump(data));
+} 
+
+function keyHandle(e)
+{
+    isStatic = !isStatic; 
+    for (var i = 0; i < _b2dObjects.length; i++) {
+        setStatic(_b2dObjects[i], isStatic);
+    }
+}
+document.onkeypress = keyHandle;
+
+
+</script>
+
+
+</html>

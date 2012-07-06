@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>RiTaBox Demo</title>
+        <style>
+            body {
+                color: #777;
+                background-color: #F9F2E3;
+                font-family: "Times New Roman";
+                font-size: 90%;
+            }
+            canvas {
+                float: left;
+                background-color: white;
+            }
+            #hud {
+                float: left;
+                padding: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="800" height="600">
+            your browser doesn't support canvas
+        </canvas>
+        <div id="hud">
+            arrow to move<br>space to jump
+            <br>health: <span id="health">100</span>
+            <br>points: <span id="score">0</span>
+            <br>mouse:  <span id="mpos">0,0</span>
+            <br>Overall X and Y Positions:  <span id="xypos">0,0</span>
+        </div>
+        <script src="../lib/Box2dWeb-2.1.a.3.js"></script>
+        <script src="../lib/Stats.js"></script>
+        <script src="../lib/RiTaBox.js"></script>
+        <script src="../fonts/Times_New_Roman.js"></script>
+        <script src="../lib/boxbox.js"></script>
+        <script src="E.js"></script>
+        
+    </body>
+</html>

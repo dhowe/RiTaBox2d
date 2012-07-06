@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>RiTaBox2d</title>
+</head>
+<body>
+<canvas id="canvas" width="600px" height="400px" style="position: absolute; background-color:#fff;"></canvas>
+</body>
+
+<script type="text/javascript" src="../lib/Box2dWeb-2.1.a.3.js"></script>
+<script type="text/javascript" src="../lib/namespace.min.js"></script>
+<script type="text/javascript" src="../lib/poly2tri.js"></script>
+<script type="text/javascript" src="../lib/Stats.js"></script>
+<script type="text/javascript" src="../lib/RiTaBox.js"></script>
+<script type="text/javascript" src="../fonts/Times_New_Roman.js"></script>
+
+<script type="text/javascript">
+
+var ctx = document.getElementById("canvas").getContext("2d");
+var world, g, x=ctx.canvas.width/2-40, y=150, isStatic = 0;
+var opts = { static: isStatic, rotates: 1, bbType:POLYS };
+var fontSz = 100;
+
+window.unload=function(){
+    
+    world = RiTaBox.createWorld(ctx, {stats: 1});
+    
+    RiTaBox.createFloor(world);
+        
+    g = RiTaBox.glyphs(x, y, "I", "Times New Roman", fontSz, world, opts);
+}
+
+//////////////////////////////////////////////////////////////////
+
+
+function setStatic(body, val) {
+    
+    var data = body.GetUserData();
+    
+    if (!data) return;
+    
+    if (!data.fixed)
+        body.SetType( val ? b2Body.b2_staticBody:b2Body.b2_dynamicBody);
+    
+    if (!val && data.type === 'glyph') {
+        data.isStatic = false;
+    }
+        //log("data:"+dump(data));
+} 
+
+function keyHandle(e)
+{
+    var actualKey = String.fromCharCode(e.which);
+
+    if (actualKey === '=') {
+        fontSz *=2;
+        actualKey = ""+g.GetUserData().chars;
+    }
+    if (actualKey === '-') {
+        fontSz /=2;
+        actualKey = ""+g.GetUserData().chars;
+    }
+   
+    if (actualKey === ' ') {
+        isStatic = !isStatic; 
+        for (var i = 0; i < __b2dObjects.length; i++) {
+            setStatic(__b2dObjects[i], isStatic);
+        }
+    }// else if (actualKey === 's') ++step;
+    else 
+    {
+        //RiTaBox.__destroy(g);
+        g = RiTaBox.glyphs(x, y, actualKey, "Times New Roman", fontSz, world, opts);
+    }
+}
+
+function drawRiTaBox2d(ctx) {
+    
+    ctx.fillStyle="rgba(255, 255, 255, 0)";
+
+    if (!DEBUG_DRAW)
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    
+    this.frameCount = (__isNull(this.frameCount)) ? 1 : frameCount+1;
+
+    __drawBodies(ctx);
+
+    if (typeof stats !== 'undefined') stats.update();
+}
+
+document.onkeypress = keyHandle;
+
+
+</script>
+
+
+</html>

@@ -1,0 +1,75 @@
+<html>
+<head>
+<title>RiTaBox2d</title>
+</head>
+
+<body onload="setup()">
+<canvas id="canvas" width="800" height="600" style="position: absolute; background-color:#fff;"></canvas>
+</body>
+
+<script type="text/javascript" src="../lib/Box2dWeb-2.1.a.3.js"></script>
+<script type="text/javascript" src="../lib/Stats.js"></script>
+<script type="text/javascript" src="../lib/RiTaBox.js"></script>
+<script type="text/javascript" src="../fonts/Helvetica.js"></script>
+
+<script type="text/javascript">
+
+var ctx = document.getElementById("canvas").getContext("2d"),
+    x = ctx.canvas.width/2-80, y = 400, fontSz = 100, isStatic = 1;
+
+function setup() {
+    
+    var rb = RiTaBox;
+    var world = rb.createWorld(ctx, 
+        {stats:1, debugDraw:1, drawNativeGlyphs:0, drawGlyphPaths:1});
+    
+    rb.createFloor(world);
+    //var rect = rb.b2rect(x-45,y,50,100,world,0,0);
+    //rb.b2circle(x+200, y+100, 25, world, false, isStatic);
+    
+    var opts = { static: isStatic, rotates: 1, rotation: Math.PI/8, bbType:POLYS };
+    
+    rb.glyphs(x, y, "Wag", "Helvetica", fontSz, world, opts);
+    
+    //opts.bbType = RECTS;
+    //rb.glyphs(x+100, y, "Is", "Helvetica", fontSz+20, world, opts);
+    
+    //rb.randomShapes(10,world);
+}
+
+//////////////////////////////////////////////////////////////////
+
+function setStatic(body, val) {
+    
+    var data = body.GetUserData();
+    
+    if (!data) return;
+    
+    if (!data.fixed)
+        body.SetType( val ? b2Body.b2_staticBody:b2Body.b2_dynamicBody);
+    
+    if (!val && data.type.indexOf('glyph')==0) {
+        data.isStatic = false;
+    }
+    //log("data:"+dump(data));
+} 
+
+function keyHandle(e)
+{
+    var actualKey = String.fromCharCode(e.which);
+
+    if (actualKey === ' ') {
+        isStatic = !isStatic; 
+        for (var i = 0; i < __b2dObjects.length; i++) {
+            setStatic(__b2dObjects[i], isStatic);
+        }
+    } 
+}
+
+document.onkeypress = keyHandle;
+
+
+</script>
+
+
+</html>

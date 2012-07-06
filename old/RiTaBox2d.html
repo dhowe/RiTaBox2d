@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>RiTaBox2d</title>
+</head>
+
+<body onload="setup()">
+<canvas id="canvas" width="800" height="600" style="position: absolute; background-color:#fff;"></canvas>
+</body>
+
+<script type="text/javascript" src="lib/Box2dWeb-2.1.a.3.js"></script>
+<script type="text/javascript" src="lib/Box2dDemo.js"></script>
+<script type="text/javascript" src="lib/namespace.min.js"></script>
+<script type="text/javascript" src="lib/poly2tri.js"></script>
+<script type="text/javascript" src="lib/Stats.js"></script>
+<script type="text/javascript" src="RiTaBox.js"></script>
+<script type="text/javascript" src="fonts/Times_New_Roman.font.js"></script>
+
+<script type="text/javascript">
+
+/*
+ * NEXT
+ *  Add Scrolling/Jumping
+ */
+
+var ctx = document.getElementById("canvas").getContext("2d"),
+    world,g,x=ctx.canvas.width/2-80,y=400, fontSz = 100, isStatic = 0;
+
+function setup() {
+    
+    //__doStats();
+    
+    world = b2DemoInit();
+    
+    __createFloor(world);
+
+    __b2rect(x+40,y+20,50,100,world,false,1);
+    __b2circle(x+200,y+100,25,world,false,isStatic);
+    
+    var opts = { static: isStatic, rotates: 1, bbType:bbTypeRect };
+    __glyphs(x+100, y, "Tuge", "Times New Roman", fontSz, world, opts);
+    
+    var opts = { static: isStatic, rotates: 1, bbType:bbTypePoly };
+    __glyphs(x, y, "T", "Times New Roman", fontSz, world, opts);
+    
+    //randomShapes(10,world);
+}
+
+//////////////////////////////////////////////////////////////////
+
+function setStatic(body, val) {
+    
+    var data = body.GetUserData();
+    
+    if (!data) return;
+    
+    if (!data.fixed)
+        body.SetType( val ? b2Body.b2_staticBody:b2Body.b2_dynamicBody);
+    
+    if (!val && data.type.indexOf('glyph')==0) {
+        data.isStatic = false;
+    }
+        //log("data:"+dump(data));
+} 
+
+
+    
+function keyHandle(e)
+{
+    var actualKey = String.fromCharCode(e.which);
+
+    if (actualKey === '=') {
+        fontSz *= 2;
+        actualKey = ""+g.GetUserData().letter;
+    }
+    if (actualKey === '-') {
+        fontSz /= 2;
+        actualKey = ""+g.GetUserData().letter;
+    }
+   
+    if (actualKey === ' ') {
+        isStatic = !isStatic; 
+        for (var i = 0; i < __b2dObjects.length; i++) {
+            setStatic(__b2dObjects[i], isStatic);
+        }
+    } 
+//    //else if (actualKey === 's') ++step;
+//
+//    else 
+//    {
+//        //__destroy(g);
+//        __glyph(x, y, actualKey, "Times New Roman", fontSz, world, false, isStatic);
+//    }
+}
+
+document.onkeypress = keyHandle;
+
+
+</script>
+
+
+</html>

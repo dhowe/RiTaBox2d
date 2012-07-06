@@ -1,0 +1,52 @@
+Fix loading times !!!!!
+
+BUGS:
+   -- will not accept spaces [make like RiText.createWords]
+   
+   -- rotation problem ::  (all static rotations are upgFuct?)  ****
+   
+   -- frame-rate ***
+   
+   -- The "U" player gets caught in the platform/elevator, usually when the player has a bit more velocity going down [ABS]
+   
+   -- At large sizes the fonts don't seem to map well with the polygons (even at 100 detail level). For example,
+      on the letterA board in my folder, the U overlaps with parts of the large E, and at other times it doesn't seem
+      to be touching any part of the E. It works great in the debugging mode. It just seems like the letter E is not
+      aligned with the polygons, but is offset from it a bit... [ABS]
+   
+   -- Debug mode: screen does not scroll [ABS]
+   
+   -- RECTS mode: Some rects around letters (in all CAPS) are taller than others so the player hits bumps trying to
+      move smoothly over them. For example, the O seems to have a slightly higher RECT around it than other letters. [ABS]
+
+FIXED:
+   
+NEXT: 
+   -- add a bounding-box=per=word option for phrases/sentences
+   
+   -- add rect possibility for entire sentence, instead of individual rects for letters?  [DONE: DCH]
+    
+   -- experiment with sans-serif font performance
+   
+   -- add keybd (or other) controls for camera zoom/scroll
+   
+   -- toggle for debugDraw
+   
+   -- bigger screen 800x600 in walkthru (DONE: DCH)
+   
+   -- use pixel coordinates				 (DONE: DCH)  
+   
+   -- multi-letter polys in walkthru (DONE: DCH)
+   
+   -- RECTS are always Static? Can't seem to change them to be non-static. (FIXED: DCH)
+   
+   
+** LevelEditor (2-way):
+	-- drag/drop
+	-- draw bounding-boxes
+	-- assign properties
+	-- see whole level (zoom/scroll)
+   
+
+  
+Experiment with quotations and footnotes
